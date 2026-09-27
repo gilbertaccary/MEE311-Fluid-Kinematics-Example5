@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEE311 - Fluid Kinematics - Example 5</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#222} .wrap{max-width:900px;margin:20px auto;padding:0 16px} h1{font-size:26px;text-align:center;margin:0 0 5px} h2{font-size:21px;font-weight:500;text-align:center;margin:0 0 14px}.eq{text-align:center;font-size:18px;line-height:1.55}.figure{position:relative;margin-top:12px;background:#f3e1bd;border:1px solid #8a7f6c;border-radius:8px;padding:8px}.controls{position:absolute;right:18px;top:18px;z-index:5;display:flex;align-items:flex-start;gap:12px}.rightcontrols{display:flex;flex-direction:column;align-items:center;gap:8px}.timebox{background:rgba(255,255,255,.86);border-radius:6px;padding:5px 9px;text-align:center;font-size:13px;font-weight:700;min-width:92px}.mainbuttons{display:flex;flex-direction:column;gap:7px}.btn{min-width:78px;height:40px;border:1px solid #777;border-radius:6px;background:rgba(255,255,255,.93);font-size:15px;cursor:pointer}.speedbox{background:rgba(255,255,255,.86);border-radius:6px;padding:5px 7px;text-align:center}.speedtitle{font-size:12px;font-weight:700;margin-bottom:4px}.speedbuttons{display:flex;gap:4px}.arrow{width:40px;height:40px;min-width:40px;font-size:22px;font-weight:bold}.speedvalue{font-size:12px;font-weight:700;margin-top:3px}svg{display:block;width:100%;height:auto}.status{text-align:center;margin:7px 0 2px;font-size:14px;color:#555;min-height:18px}.signature{text-align:left;font-size:13px;font-style:italic;color:#555;margin:3px 0 0 4px}@media(max-width:600px){h1{font-size:20px}h2{font-size:17px}.eq{font-size:15px}.controls{right:12px;top:12px;gap:6px}.btn{min-width:65px;height:36px;font-size:13px}.arrow{width:36px;height:36px;min-width:36px}.speedtitle,.speedvalue{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>MEE311 - Fluid Mechanics</h1>
+<h2>Chapter 3 - Fluid Kinematics - Example 5</h2>
+<div class="eq">Velocity field: <strong>u = 0.5 + 0.8x,&nbsp;&nbsp; v = 1.5 − 0.8y</strong> &nbsp;(SI units)</div>
+<div class="eq">Streamlines: <strong>(0.5 + 0.8x)(1.5 − 0.8y) = C</strong></div>
+<div class="status" id="status">Click in the flow domain to position the initial square.</div>
+<div class="figure">
+<div class="controls">
+ <div class="mainbuttons"><button class="btn" id="play">Play</button><button class="btn" id="stop">Stop</button><button class="btn" id="restart">Restart</button></div>
+ <div class="rightcontrols"><div class="timebox" id="timebox">t = 0.000 s</div><div class="speedbox"><div class="speedtitle">Animation speed</div><div class="speedbuttons"><button class="btn arrow" id="slower" aria-label="Slow down">↓</button><button class="btn arrow" id="faster" aria-label="Speed up">↑</button></div><div class="speedvalue" id="speedvalue">1.00×</div></div></div>
+</div>
+<svg id="flow" viewBox="0 0 600 600" aria-label="Flow field with streamlines and deforming material volume">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#2478b5"/></marker><clipPath id="clip"><rect x="55" y="25" width="520" height="520"/></clipPath></defs>
+<rect x="55" y="25" width="520" height="520" fill="#f3e1bd" stroke="#817766" stroke-width="1.5"/>
+<g id="grid" clip-path="url(#clip)"></g><g id="streams" clip-path="url(#clip)"></g><g id="axes"></g>
+<g clip-path="url(#clip)"><path id="material" fill="#9fd8b4" fill-opacity=".94" stroke="#496755" stroke-width="2.3" stroke-linejoin="round"/></g>
+<text x="315" y="590" text-anchor="middle" font-size="17">x (m)</text><text x="17" y="285" text-anchor="middle" font-size="17" transform="rotate(-90 17 285)">y (m)</text>
+</svg>
+<div class="signature">Dr. Gilbert Accary, LAU</div>
+</div>
+</div>
+<script>
+(()=>{const svg=document.getElementById('flow'),mat=document.getElementById('material'),streams=document.getElementById('streams'),grid=document.getElementById('grid'),axes=document.getElementById('axes'),play=document.getElementById('play'),stopB=document.getElementById('stop'),restart=document.getElementById('restart'),slower=document.getElementById('slower'),faster=document.getElementById('faster'),speedTxt=document.getElementById('speedvalue'),timeBox=document.getElementById('timebox'),status=document.getElementById('status');
+const NS='http://www.w3.org/2000/svg',L=55,T=25,W=520,H=520,xmin=0,xmax=6,ymin=-1,ymax=6,side=.6,sx=x=>L+W*(x-xmin)/(xmax-xmin),sy=y=>T+H*(ymax-y)/(ymax-ymin),mk=(tag,a,p)=>{const e=document.createElementNS(NS,tag);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));p.appendChild(e);return e};
+for(let x=0;x<=6;x++){mk('line',{x1:sx(x),y1:sy(ymin),x2:sx(x),y2:sy(ymax),stroke:'#c7b590','stroke-width':1},grid);mk('text',{x:sx(x),y:sy(ymin)+22,'text-anchor':'middle','font-size':13,fill:'#333'},axes).textContent=x;}for(let y=-1;y<=6;y++){mk('line',{x1:sx(xmin),y1:sy(y),x2:sx(xmax),y2:sy(y),stroke:'#c7b590','stroke-width':1},grid);mk('text',{x:sx(xmin)-10,y:sy(y)+5,'text-anchor':'end','font-size':13,fill:'#333'},axes).textContent=y;}mk('line',{x1:sx(xmin),y1:sy(ymin),x2:sx(xmax),y2:sy(ymin),stroke:'#292929','stroke-width':1.7},axes);mk('line',{x1:sx(xmin),y1:sy(ymin),x2:sx(xmin),y2:sy(ymax),stroke:'#292929','stroke-width':1.7},axes);
+const seeds=[[0,-1],[1,-1],[2,-1],[3,-1],[4,-1],[5,-1],[0,1],[0,3],[0,5],[1,5],[2,5],[3,5],[4,5],[5,5]];
+const constants=[];for(const [x,y] of seeds){const C=(.5+.8*x)*(1.5-.8*y);if(!constants.some(v=>Math.abs(v-C)<1e-10))constants.push(C)}
+for(const C of constants){const a=[];for(let x=xmin;x<=xmax+1e-9;x+=.01){const y=(1.5-C/(.5+.8*x))/.8;if(y>=ymin-1e-9&&y<=ymax+1e-9)a.push([x,y]);}if(a.length<4)continue;mk('path',{d:a.map((p,i)=>(i?'L':'M')+sx(p[0]).toFixed(1)+','+sy(p[1]).toFixed(1)).join(''),fill:'none',stroke:'#2478b5','stroke-width':1.9},streams);[.35,.68].forEach(fr=>{const j=Math.min(a.length-7,Math.max(0,Math.floor(a.length*fr))),q=j+6;if(q<a.length)mk('line',{x1:sx(a[j][0]),y1:sy(a[j][1]),x2:sx(a[q][0]),y2:sy(a[q][1]),stroke:'#2478b5','stroke-width':1.8,'marker-end':'url(#arr)'},streams);});}
+let cx=1.5,cy=4,t=0,speed=1,running=false,last=null,raf=null,finished=false;function boundary(){const h=side/2,n=60,p=[];for(let i=0;i<n;i++)p.push([cx-h+side*i/(n-1),cy-h]);for(let i=1;i<n;i++)p.push([cx+h,cy-h+side*i/(n-1)]);for(let i=1;i<n;i++)p.push([cx+h-side*i/(n-1),cy+h]);for(let i=1;i<n-1;i++)p.push([cx-h,cy+h-side*i/(n-1)]);return p}function adv(xi,yi,tt){const e=Math.exp(.8*tt);return[(xi+.625)*e-.625,1.875+(yi-1.875)/e]}function pts(tt){return boundary().map(p=>adv(p[0],p[1],tt))}const visible=p=>Number.isFinite(p[0])&&Number.isFinite(p[1])&&p[0]>=xmin&&p[0]<=xmax&&p[1]>=ymin&&p[1]<=ymax;function draw(){const p=pts(t);mat.setAttribute('d',p.map((q,i)=>(i?'L':'M')+sx(q[0]).toFixed(1)+','+sy(q[1]).toFixed(1)).join('')+'Z');speedTxt.textContent=speed.toFixed(2)+'×';timeBox.textContent='t = '+t.toFixed(3)+' s';}function halt(){running=false;if(raf)cancelAnimationFrame(raf);raf=null;last=null}function tick(now){if(!running)return;if(last===null)last=now;t+=Math.min(.025,(now-last)/1000)*speed;last=now;const p=pts(t);draw();if(!p.some(visible)){finished=true;halt();status.textContent='Material volume has completely left the flow domain.';return;}raf=requestAnimationFrame(tick)}
+play.addEventListener('click',()=>{if(finished){t=0;finished=false;draw()}if(!running){running=true;last=null;raf=requestAnimationFrame(tick)}});stopB.addEventListener('click',()=>{halt();status.textContent='Animation stopped.'});restart.addEventListener('click',()=>{halt();t=0;finished=false;status.textContent='Click in the flow domain to reposition the initial square, or press Play.';draw()});slower.addEventListener('click',()=>{speed=Math.max(.05,speed/1.5);draw()});faster.addEventListener('click',()=>{speed=Math.min(8,speed*1.5);draw()});
+svg.addEventListener('pointerdown',e=>{const r=svg.getBoundingClientRect(),vx=(e.clientX-r.left)*600/r.width,vy=(e.clientY-r.top)*600/r.height;let x=xmin+(vx-L)*(xmax-xmin)/W,y=ymax-(vy-T)*(ymax-ymin)/H;if(x<xmin||x>xmax||y<ymin||y>ymax)return;const h=side/2;cx=Math.max(xmin+h,Math.min(xmax-h,x));cy=Math.max(ymin+h,Math.min(ymax-h,y));halt();t=0;finished=false;draw();status.textContent='Initial material volume positioned. Press Play.'});draw();})();
+</script>
+</body>
+</html>
